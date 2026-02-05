@@ -1,0 +1,138 @@
+/* ===========================
+   Blue Rounded Wrapper for Analysis Page
+=========================== */
+.blue-wrapper {
+    background-color: #173d68; /* Primary blue */
+    border-radius: 16px; /* Increased rounding */
+    padding: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 100%;
+    max-width: 1300px;
+    margin: 40px auto;
+}
+
+/* ===========================
+   Main Container (inside wrapper)
+=========================== */
+.analysismain {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    padding: 20px;
+    color: white; /* Ensures text contrasts with dark background */
+}
+
+/* ===========================
+   Page Title
+=========================== */
+.analysis-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #173d68; /* Primary blue */
+    color: white;
+    border-radius: 12px; /* Increased rounding */
+}
+
+/* ===========================
+   Tab Navigation
+=========================== */
+.analysis-tabs {
+    display: flex;
+    border-bottom: 2px solid white;
+    margin-bottom: 20px;
+}
+
+.analysis-tab {
+    padding: 10px 20px;
+    margin-right: 5px;
+    background-color: #173d68; /* Primary blue */
+    color: white;
+    border-radius: 10px; /* Increased rounding */
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.analysis-tab.active {
+    background-color: #2A68F6; /* Highlighted selected tab */
+    transform: translateY(-3px); /* Moves the button up by 3 pixels */
+    transition: transform 0.2s ease-in-out; /* Smooth animation */
+}
+
+
+/* ===========================
+   Tab Content Container
+=========================== */
+.analysis-content {
+    display: none;
+    padding: 20px;
+    border-radius: 10px; /* Increased rounding */
+    background-color: #173d68; /* Primary blue */
+}
+
+.analysis-content.active {
+    display: block;
+}
+
+/* ===========================
+   Visualization Containers
+=========================== */
+.visualization-container {
+    margin-bottom: 30px;
+    border-radius: 12px; /* Increased rounding */
+    overflow: hidden;
+    background-color: #173d68; /* Primary blue */
+}
+
+/* Visualization Title */
+.visualization-title {
+    padding: 10px 15px;
+    background-color: #2A68F6; /* Highlight */
+    color: white;
+    font-weight: bold;
+    border-radius: 8px; /* Increased rounding */
+}
+
+/* The actual visualization area */
+.tableau-container {
+    height: 600px;
+    width: 100%;
+    background-color: #173d68; /* Primary blue */
+}
+
+/* ===========================
+   Loading Indicator
+=========================== */
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.spinner {
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-left: 5px solid #2A68F6; /* Highlighted spinner */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===========================
+   Error Message
+=========================== */
+.error-message {
+    padding: 20px;
+    color: #ffcccc;
+    background-color: #6e202f;
+    border-radius: 12px; /* Increased rounding */
+    margin: 10px 0;
+}

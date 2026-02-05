@@ -1,0 +1,57 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}Home - BCIT Accreditation System{% endblock %}
+
+{% block content %}
+<div class="home-container-custom">
+    
+    <!-- Upload CSV Section -->
+    <div class="feature-box-custom">
+        <div class="feature-title-custom">Upload CSV File</div>
+        <div class="image-wrapper-custom"> 
+            <div class="image-box-custom">
+                <img src="/static/images/csv.png" alt="CSV Icon">
+            </div>
+        </div>
+        <a href="{% url 'form_step1' %}" class="view-button-custom">Upload A CSV</a>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="feature-box-custom">
+        <div class="feature-title-custom">Analytics Panel</div>
+        <div class="image-wrapper-custom">
+            <div class="image-box-custom">
+                <img src="/static/images/graph.png" alt="Analytics Icon">
+            </div>
+        </div>
+        <a href="{% url 'analysis' %}" class="view-button-custom">View Analytics</a>
+    </div>
+
+    <!-- Admin Panel Section -->
+    <div class="feature-box-custom">
+        <div class="feature-title-custom">Admin Panel</div>
+        <div class="image-wrapper-custom">
+            <div class="image-box-custom">
+                <img src="/static/images/admin.png" alt="Admin Icon">
+            </div>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="view-button-custom">Admin Control</a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clear sensitive form data when coming to home page
+        sessionStorage.removeItem('f1FormData');
+        sessionStorage.removeItem('f2FormData');
+        sessionStorage.removeItem('f3FormData');
+        sessionStorage.removeItem('csvFileName');
+        sessionStorage.removeItem('csvFileContent');
+        
+        console.log('Session storage cleared on home page load');
+    });
+</script>
+{% endblock %}

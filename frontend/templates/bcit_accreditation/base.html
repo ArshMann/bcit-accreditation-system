@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}BCIT Accreditation System{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- HEADER START -->
+<header class="main-header">
+    <div class="header-content">
+        <h1>BCIT Accreditation System</h1>
+        <div class="auth-buttons">
+            {% if user.is_authenticated %}
+                <span>Welcome, {{ user.username }}</span>
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+<!-- HEADER END -->
+
+<!-- NAVIGATION START -->
+{% if user.is_authenticated %}
+<nav class="main-nav">
+    <div class="nav-links">
+        <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a>
+        <a href="{% url 'analysis' %}" class="{% if 'analysis' in request.path %}active{% endif %}">Analytics</a>
+        <a href="{% url 'form_step1' %}" class="{% if 'form/step1' in request.path %}active{% endif %}">Upload Data</a>
+        {% if user.is_staff or user.is_superuser %}<!-- change this to correct perms and for courses aswell maybe? -->
+            <a href="{% url 'admin_dashboard' %}" class="{% if 'admin-dashboard' in request.path %}active{% endif %}">Admin Dashboard</a>
+        {% endif %}
+    </div>
+</nav>
+{% endif %}
+<!-- NAVIGATION END -->
+
+<!-- MAIN CONTENT START -->
+<main class="flex-grow-1">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+<!-- MAIN CONTENT END -->
+
+<!-- FOOTER START -->
+<footer class="main-footer">
+    <p>&copy; {% now "Y" %} BCIT Accreditation System</p>
+    <p>Developed for COMP3800</p>
+</footer>
+<!-- FOOTER END -->
+
+{% block extra_js %}
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the home navigation link
+    const homeNavLink = document.querySelector('nav a[href="{% url "home" %}"]');
+    
+    if (homeNavLink) {
+        homeNavLink.addEventListener('click', function(e) {
+            // Clear sensitive form data when clicking the home link
+            sessionStorage.removeItem('f1FormData');
+            sessionStorage.removeItem('f2FormData');
+            sessionStorage.removeItem('f3FormData');
+            sessionStorage.removeItem('csvFileName');
+            sessionStorage.removeItem('csvFileContent');
+            
+            // Let the navigation proceed normally
+            // (don't need e.preventDefault() here)
+        });
+    }
+});
+{% endblock %}
+</body>
+</html>

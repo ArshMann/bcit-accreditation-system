@@ -1,0 +1,158 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}CSV Upload Test - BCIT Accreditation System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="my-2">CSV File Upload Test</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead mb-4">Use this page to test CSV file uploads for the BCIT Accreditation System.</p>
+                
+                <form id="csvUploadForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="csv_file" class="form-label">Select CSV File</label>
+                        <input class="form-control" type="file" id="csv_file" name="csv_file" accept=".csv" required>
+                        <div class="form-text">Please select a CSV file to upload.</div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Upload CSV</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Upload Status -->
+        <div id="uploadStatus" class="alert mt-4 d-none" role="alert"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('csvUploadForm');
+    const statusDiv = document.getElementById('uploadStatus');
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const fileInput = document.getElementById('csv_file');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            showStatus('Please select a CSV file to upload.', 'danger');
+            return;
+        }
+        
+        if (!file.name.endsWith('.csv')) {
+            showStatus('File must be a CSV format.', 'danger');
+            return;
+        }
+        
+        // Create form data for upload
+        const formData = new FormData();
+        formData.append('csv_file', file);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        // Show loading status
+        showStatus('Uploading file...', 'info');
+        
+        // Send AJAX request
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showStatus(data.message, 'success');
+                // Reset the form on success
+                form.reset();
+            } else {
+                showStatus(data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            showStatus('Error uploading file: ' + error.message, 'danger');
+        });
+    });
+    
+    function showStatus(message, type) {
+        statusDiv.textContent = message;
+        statusDiv.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-info');
+        statusDiv.classList.add('alert-' + type);
+        
+        // For better UX, add an animated fade-in effect
+        statusDiv.style.opacity = 0;
+        statusDiv.classList.remove('d-none');
+        
+        // Fade in
+        let opacity = 0;
+        const timer = setInterval(() => {
+            opacity += 0.1;
+            statusDiv.style.opacity = opacity;
+            if (opacity >= 1) clearInterval(timer);
+        }, 30);
+        
+        // Auto-hide success messages after 5 seconds
+        if (type === 'success') {
+            setTimeout(() => {
+                // Fade out
+                let opacity = 1;
+                const timer = setInterval(() => {
+                    opacity -= 0.1;
+                    statusDiv.style.opacity = opacity;
+                    if (opacity <= 0) {
+                        clearInterval(timer);
+                        statusDiv.classList.add('d-none');
+                    }
+                }, 30);
+            }, 5000);
+        }
+    }
+});
+</script>
+{% endblock %}
+
+{% block extra_python %}
+@login_required
+def test_upload_view(request):
+    """
+    Handle CSV file upload test page (requires authentication)
+    """
+    if request.method == 'POST' and request.FILES.get('csv_file'):
+        csv_file = request.FILES['csv_file']
+        # Check if file is a CSV
+        if not csv_file.name.endswith('.csv'):
+            return JsonResponse({'success': False, 'message': 'File is not a CSV'})
+        
+        try:
+            # Access the file content - this will be where your colleague's function would be called
+            file_content = csv_file.read()
+            
+            # Here, you would typically call your colleague's CSV processing function:
+            # Example: result = your_colleagues_csv_function(file_content)
+            
+            # For testing that the file is properly uploaded and accessible
+            row_count = file_content.decode('utf-8').count('\n')
+            
+            return JsonResponse({
+                'success': True, 
+                'message': f'File successfully uploaded! Found approximately {row_count} rows of data.',
+                'file_name': csv_file.name,
+                'file_size': csv_file.size
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'message': f'Error processing file: {str(e)}'
+            })
+    
+    return render(request, 'bcit_accreditation/test.html')
+{% endblock %}

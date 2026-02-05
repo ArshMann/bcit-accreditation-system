@@ -1,0 +1,189 @@
+/* Base styling */
+body {
+    
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    max-width: 1000px;
+    margin: 1.5rem auto; /* Reduced margin */
+    padding: 1.5rem; /* Reduced padding */
+}
+
+/* Form card */
+.form-wrapper {
+    background-color: #173d68;
+    border-radius: 12px;
+    padding: 1.5rem; /* Reduced padding */
+    color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.75);
+}
+
+
+
+/* Paragraphs */
+p.form-description {
+    color: #e0e0e0;
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+}
+
+/* Form grid for input grouping */
+.form-grid {
+    display: flex;
+    gap: 1.2rem; /* Slightly reduced gap */
+    flex-wrap: wrap;
+}
+
+/* Each column in the form */
+.form-column {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+label {
+    margin-top: 0.8rem; /* Reduced spacing */
+    font-weight: bold;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+/* Inputs and select with form-control class */
+input.form-control,
+select.form-control {
+    margin-top: 0.3rem;
+    padding: 0.4rem 0.6rem; /* Reduced padding */
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #000;
+    font-size: 1rem;
+    font-weight: bold; /* Stronger font weight */
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+/* File input specifically */
+input[type="file"] {
+    padding: 0.3rem 0.6rem;
+    height: auto;
+}
+
+/* Button row */
+.button-row {
+    margin-top: 1rem; /* Reduced spacing */
+}
+
+/* Submit button */
+button[type="submit"] {
+    background-color: #2A68F6;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: inherit;
+}
+
+ button[type="submit"]:hover {
+    transform: translateY(-3px);
+    background-color: #1c47aa;
+}
+
+/* Status message */
+#uploadStatus {
+    margin-top: 0.8rem; /* Reduced spacing */
+    font-weight: bold;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.8rem; /* Reduced spacing */
+    font-size: 0.95rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead tr {
+    background-color: #2A68F6;
+    color: white;
+}
+
+thead th {
+    color: white; /* Ensuring white text in the header row */
+}
+
+/* Status in table */
+.success {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.failed {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Style for the file input */
+input[type="file"], select {
+    height: 40px; /* Ensuring uniform height */
+    padding: 8px;
+    border: 2px solid #2A68F6;
+    border-radius: 5px;
+    background-color: #2A68F6;
+    color: white;
+    font-size: 16px;
+    font-weight: bold; /* Stronger font weight */
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Hover effects for better interactivity */
+input[type="file"]:hover, select:hover {
+    border-color: #1a4bb5;
+    background-color: #1a4bb5;
+}
+
+/* Focus effects */
+input[type="file"]:focus, select:focus {
+    outline: none;
+    border-color: #1a4bb5;
+    box-shadow: 0 0 5px rgba(42, 104, 246, 0.5);
+}
+
+/* CSV Template links */
+.form-wrapper a {
+    color: #aad4ff; /* Light blue */
+    font-weight: bold; /* Makes the font heavier */
+    text-decoration: none;
+    margin: 0 0.3rem;
+}
+
+.form-wrapper a:hover {
+    text-decoration: underline;
+    color: #85bbff; /* Slightly darker blue on hover */
+} */
+
+Ensure global header font weight remains unchanged
+header h1, header h2, header h3, header h4 {
+    font-weight: bold;
+}

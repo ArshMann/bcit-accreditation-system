@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "1047:5432"  # Map port 1047 to PostgreSQL's default port
+    environment:
+      - POSTGRES_DB=${DB_NAME:-accreditation_db}
+      - POSTGRES_USER=${DB_USER:-basic_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-proj1047}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-basic_user} -d ${DB_NAME:-accreditation_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: >
+      bash -c "cd backend &&
+               python manage.py migrate --noinput &&
+               python manage.py collectstatic --noinput &&
+               gunicorn bcit_accreditation.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/app
+      - static_volume:/app/backend/staticfiles
+      - media_volume:/app/backend/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./.env    
+    environment:
+      - IN_DOCKER=True
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DEBUG=False
+      - DB_NAME=${DB_NAME:-accreditation_db}
+      - DB_USER=${DB_USER:-basic_user}
+      - DB_PASSWORD=${DB_PASSWORD:-proj1047}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      - FERNET_KEY=${FERNET_KEY}
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/backend/staticfiles
+      - media_volume:/app/backend/media
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

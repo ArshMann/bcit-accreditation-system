@@ -1,0 +1,177 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}Upload CSV - BCIT Accreditation System{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/csv_upload.css' %}">
+
+<div class="container">
+    <div class="form-wrapper">
+        <h1>Excel File Upload</h1>
+        <p class="form-description">Use this page to upload course data in XLSX format to the BCIT Accreditation System.</p>
+
+        <form id="csvUploadForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-column">
+                    <label for="xlsx_file">Select Excel File</label>
+                    <input type="file" id="xlsx_file" name="xlsx_file" accept=".csv, .xlsx" required>
+                </div>
+                <div class="form-column">
+                    <label for="file_type">Data Type</label>
+                    <select id="file_type" name="file_type" required>
+                        <option value="" selected disabled>Select data type</option>
+                        <option value="course">Course Data</option>
+                        <option value="student">Student Data</option>
+                        <option value="program">Program Data</option>
+                        <option value="accreditation">Accreditation Metrics</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button type="submit">Upload Excel File</button>
+            </div>
+        </form>
+
+        <div id="uploadStatus" class="alert d-none" role="alert"></div>
+    </div>
+
+    <div class="form-wrapper" style="margin-top: 2rem;">
+        <h2>CSV Templates</h2>
+        <p class="form-description">Download the template for the data you want to upload:</p>
+        <div>
+            <a href="#">Course Template</a> |
+            <a href="#">Student Template</a> |
+            <a href="#">Program Template</a> |
+            <a href="#">Accreditation Template</a>
+        </div>
+    </div>
+
+    <div class="form-wrapper" style="margin-top: 2rem;">
+        <h2>Recent Uploads</h2>
+        <table style="width: 100%; background: white; color: #000; border-radius: 8px; overflow: hidden;">
+            <thead style="background-color: #2A68F6; color: white;">
+                <tr>
+                    <th style="padding: 0.5rem;">Filename</th>
+                    <th style="padding: 0.5rem;">Data Type</th>
+                    <th style="padding: 0.5rem;">Upload Date</th>
+                    <th style="padding: 0.5rem;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 0.5rem;">courses_spring2025.csv</td>
+                    <td>Course Data</td>
+                    <td>May 6, 2025</td>
+                    <td><span class="success">Success</span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.5rem;">program_metrics.csv</td>
+                    <td>Program Data</td>
+                    <td>May 5, 2025</td>
+                    <td><span class="success">Success</span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 0.5rem;">accred_data_2025.csv</td>
+                    <td>Accreditation Metrics</td>
+                    <td>May 3, 2025</td>
+                    <td><span class="failed">Failed</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('csvUploadForm');
+    const statusDiv = document.getElementById('uploadStatus');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('xlsx_file');
+        const fileTypeSelect = document.getElementById('file_type');
+        const file = fileInput.files[0];
+        const fileType = fileTypeSelect.value;
+
+        if (!file) {
+            showStatus('Please select a XLSX file to upload.', 'danger');
+            return;
+        }
+
+        if (!file.name.endsWith('.csv') && !file.name.endsWith('.xlsx')) {
+            showStatus('File must be in .csv or .xlsx format.', 'danger');
+            return;
+        }
+
+
+        if (!fileType) {
+            showStatus('Please select a data type.', 'danger');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('xlsx_file', file);
+        formData.append('file_type', fileType);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+        showStatus('Uploading file... Please wait.', 'info');
+
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showStatus(data.message, 'success');
+                form.reset();
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                showStatus(data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            showStatus('Error uploading file: ' + error.message, 'danger');
+        });
+    });
+
+    function showStatus(message, type) {
+        statusDiv.textContent = message;
+        statusDiv.className = 'alert alert-' + type;
+
+        // Animate in
+        statusDiv.classList.remove('d-none');
+        statusDiv.style.opacity = 0;
+        let opacity = 0;
+        const fadeIn = setInterval(() => {
+            opacity += 0.1;
+            statusDiv.style.opacity = opacity;
+            if (opacity >= 1) clearInterval(fadeIn);
+        }, 30);
+
+        if (type === 'success' || type === 'info') {
+            setTimeout(() => {
+                let fadeOpacity = 1;
+                const fadeOut = setInterval(() => {
+                    fadeOpacity -= 0.1;
+                    statusDiv.style.opacity = fadeOpacity;
+                    if (fadeOpacity <= 0) {
+                        clearInterval(fadeOut);
+                        statusDiv.classList.add('d-none');
+                    }
+                }, 30);
+            }, 5000);
+        }
+    }
+});
+</script>
+{% endblock %}

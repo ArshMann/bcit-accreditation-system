@@ -1,0 +1,44 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}Upload Successful - BCIT Accreditation System{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/form4.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="blue-wrapper">
+    <div class="f4container">
+        <!-- Success Message Container -->
+        <div class="success-container">
+            <h2>Upload successful</h2>
+        </div>
+
+        <!-- Home Button -->
+        <div class="home-button-container">
+            <a href="{% url 'home' %}" id="homeButton" class="home-button">Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clear form data but keep CSV file information
+        sessionStorage.removeItem('f1FormData');
+        sessionStorage.removeItem('f2FormData');
+        sessionStorage.removeItem('f3FormData');
+        sessionStorage.removeItem('csvFileName');
+        sessionStorage.removeItem('csvFileContent');
+        
+        // Add click handler for home button - clear CSV data when going home
+        document.getElementById('homeButton').addEventListener('click', function() {
+            // Clean up any remaining session storage
+            sessionStorage.clear();
+            window.location.href = '{% url "home" %}';
+        });
+    });
+</script>
+{% endblock %}

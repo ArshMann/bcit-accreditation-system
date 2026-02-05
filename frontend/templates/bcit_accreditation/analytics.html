@@ -1,0 +1,202 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}Analytics - BCIT Accreditation System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tableau-container {
+        height: 700px;
+        margin-bottom: 30px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .nav-pills .nav-link.active {
+        background-color: #0d6efd;
+    }
+    .tab-pane {
+        padding: 20px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-start fw-bold text-white bg-primary p-3">Analytics Dashboard</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-pills mb-4" id="analyticsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Program Overview</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="course-tab" data-bs-toggle="pill" data-bs-target="#course" type="button" role="tab" aria-controls="course" aria-selected="false">Course Metrics</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="student-tab" data-bs-toggle="pill" data-bs-target="#student" type="button" role="tab" aria-controls="student" aria-selected="false">Student Outcomes</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="accred-tab" data-bs-toggle="pill" data-bs-target="#accred" type="button" role="tab" aria-controls="accred" aria-selected="false">Accreditation Status</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="analyticsTabContent">
+                <!-- Program Overview Tab -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h4>Program Performance Overview</h4>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="tableau-container" id="overviewViz">
+                                <!-- Tableau viz will be loaded here -->
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Course Metrics Tab -->
+                <div class="tab-pane fade" id="course" role="tabpanel" aria-labelledby="course-tab">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h4>Course-level Performance Metrics</h4>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="tableau-container" id="courseViz">
+                                <!-- Tableau viz will be loaded here -->
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Student Outcomes Tab -->
+                <div class="tab-pane fade" id="student" role="tabpanel" aria-labelledby="student-tab">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h4>Student Outcome Achievements</h4>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="tableau-container" id="studentViz">
+                                <!-- Tableau viz will be loaded here -->
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Accreditation Status Tab -->
+                <div class="tab-pane fade" id="accred" role="tabpanel" aria-labelledby="accred-tab">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h4>Accreditation Compliance Tracking</h4>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="tableau-container" id="accredViz">
+                                <!-- Tableau viz will be loaded here -->
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Tableau visualizations
+    initViz();
+    
+    // Handle tab changes to resize Tableau viz
+    const tabEls = document.querySelectorAll('button[data-bs-toggle="pill"]');
+    tabEls.forEach(tabEl => {
+        tabEl.addEventListener('shown.bs.tab', event => {
+            // Resize the Tableau viz when a tab is shown
+            const tabId = event.target.getAttribute('aria-controls');
+            const vizId = tabId + 'Viz';
+            if (window.tableauVizs && window.tableauVizs[vizId]) {
+                window.tableauVizs[vizId].setFrameSize(
+                    document.getElementById(vizId).offsetWidth,
+                    document.getElementById(vizId).offsetHeight
+                );
+            }
+        });
+    });
+});
+
+function initViz() {
+    // Store viz objects
+    window.tableauVizs = {};
+    
+    // Replace with your actual Tableau Public URLs
+    const vizUrls = {
+        'overviewViz': 'https://public.tableau.com/views/ProgramOverview/Dashboard1',
+        'courseViz': 'https://public.tableau.com/views/CourseMetrics/Dashboard1',
+        'studentViz': 'https://public.tableau.com/views/StudentOutcomes/Dashboard1',
+        'accredViz': 'https://public.tableau.com/views/AccreditationStatus/Dashboard1'
+    };
+    
+    // Create each visualization
+    for (const [containerId, url] of Object.entries(vizUrls)) {
+        const containerDiv = document.getElementById(containerId);
+        const options = {
+            hideTabs: true,
+            hideToolbar: true,
+            width: '100%',
+            height: '100%',
+            onFirstInteractive: function() {
+                console.log(containerId + " loaded");
+            }
+        };
+        
+        try {
+            // Clear container
+            containerDiv.innerHTML = '';
+            window.tableauVizs[containerId] = new tableau.Viz(containerDiv, url, options);
+        } catch (e) {
+            console.error("Error loading Tableau viz:", e);
+            containerDiv.innerHTML = '<div class="alert alert-danger m-3">Error loading visualization. Please try again later.</div>';
+        }
+    }
+}
+
+// Handle window resize to resize all vizs
+window.addEventListener('resize', function() {
+    if (window.tableauVizs) {
+        for (const [containerId, viz] of Object.entries(window.tableauVizs)) {
+            const container = document.getElementById(containerId);
+            if (container && viz) {
+                viz.setFrameSize(container.offsetWidth, container.offsetHeight);
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

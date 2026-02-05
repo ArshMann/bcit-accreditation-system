@@ -1,0 +1,63 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}Register - BCIT Accreditation System{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <h2>Register</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'register_user' %}" class="login-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" required placeholder="Enter your username" class="input-field" />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input id="email" name="email" type="email" required placeholder="Enter your email" class="input-field" />
+            </div>
+
+            <div class="form-group">
+                <label for="password1">Password</label>
+                <input id="password1" name="password1" type="password" required placeholder="Enter your password" class="input-field" />
+            </div>
+
+            <div class="form-group">
+                <label for="password2">Confirm Password</label>
+                <input id="password2" name="password2" type="password" required placeholder="Confirm your password" class="input-field" />
+            </div>
+
+
+
+            <div class="actions">
+                <button type="submit" class="login-button">Register</button>
+            </div>
+        </form>
+
+        
+
+        <div class="footer-note">
+            <a href="{% url 'login_user' %}" class="forgot-password">Already have an account?</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('username').focus();
+    });
+</script>
+{% endblock %}

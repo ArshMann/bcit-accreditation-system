@@ -1,0 +1,135 @@
+/* ===========================
+   Blue Rounded Wrapper
+=========================== */
+.blue-wrapper {
+    background-color: #173d68;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 40px auto;
+}
+
+/* ===========================
+   General Page Styles
+=========================== */
+.page-container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 100vh; /* Full viewport height */
+    width: 100%; /* Ensure it spans the full width */
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+/* ===========================
+   Success Message
+=========================== */
+.success-container {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.0);
+}
+
+.success-container h2 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* ===========================
+   Download Button
+=========================== */
+.download-button-container {
+    margin: 20px auto 30px;
+    text-align: center;
+}
+
+.download-button {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    text-decoration: underline; /* Underlined text */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease, transform 0.5s ease;
+}
+
+.download-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.download-button:active {
+    transform: translateY(0);
+}
+
+/* ===========================
+   Home Button
+=========================== */
+.home-button-container {
+    margin-top: 30px;
+}
+
+.home-button {
+    display: inline-block;
+    background-color: white;
+    color: #173d68;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.home-button:hover {
+    background-color: #606060;
+    transform: translateY(-6px);
+}
+
+.home-button:active {
+    background-color: #0b1f37;
+    transform: translateY(1px);
+}
+
+/* ===========================
+   Buttons
+=========================== */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.button {
+    flex: 1;
+    padding: 12px 18px; /* Increased height */
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button {
+    background-color: #2A68F6;
+}
+
+.submit-button {
+    background-color: #2A68F6;
+}
+
+.button:hover {
+    opacity: 0.9;
+}

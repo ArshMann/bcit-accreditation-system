@@ -1,0 +1,313 @@
+{% extends 'bcit_accreditation/base.html' %}
+{% load static %}
+
+{% block title %}Assessment Comments & Confirmation - BCIT Accreditation System{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/form3.css' %}">
+<style>
+  .highlight-required {
+    box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.8) !important;
+    border: 2px solid #ff0000 !important;
+  }
+  
+  textarea.highlight-required {
+    background-color: rgba(255, 200, 200, 0.3);
+  }
+  
+  .file-upload.highlight-required {
+    background-color: rgba(255, 100, 100, 0.6);
+  }
+  
+  /* Improve the default browser validation message visibility */
+  input:invalid:focus, textarea:invalid:focus {
+    box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.6);
+  }
+
+  /* Download button styles */
+  .download-button-container {
+    margin: 20px auto;
+    text-align: center;
+  }
+
+  .download-button {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    text-decoration: underline;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease, transform 0.5s ease;
+  }
+
+  .download-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  .download-button:active {
+    transform: translateY(0);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="f3container">
+    
+    <!-- Download Student Assessment Template -->
+    <div class="download-button-container">
+        <a href="{% url 'download_assessment' %}" class="download-button">Download Student Assessment Template</a>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="section-header">
+        <h2 class="heading">Upload Excel file (.xlsx)</h2>
+    </div>
+
+    <div class="upload-container">
+        <div class="file-upload">
+            <input type="file" id="csvFile" name="csvFile" accept=".xlsx" required class="file-input">
+            <label for="csvFile" class="file-label">Click to select Excel (.xlsx) file</label>
+            <div class="file-info">No file selected</div>
+        </div>
+    </div>
+
+    <!-- Confirm Data Section -->
+    <div class="section-header">
+        <h2 class="heading">Confirm Data</h2>
+    </div>
+
+    <div class="data-container">
+        <div id="userData" class="user-data">
+            <p class="loading-text">Loading your data...</p>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="section-header">
+        <h2 class="heading">Additional info about assessment</h2>
+    </div>
+
+    <div class="comments-container">
+        <form id="assessmentCommentForm">
+            <input type="hidden" id="formData" class="form-storage">
+            {% csrf_token %}
+            <div class="comment-field">
+                <label for="assessmentComments">Comments on the assessment results</label>
+                <textarea id="assessmentComments" name="assessmentComments" maxlength="800"
+                          placeholder="If the results indicate a high percentage of students marginally meeting or below expectations, please comment on whether any changes or resources are required for students to succeed." required></textarea>
+                <div class="char-counter"><span id="commentsCounter">0</span>/800</div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="button-group">
+        <button type="button" id="backButton" class="button back-button">Previous Page</button>
+        <button type="button" id="submitButton" class="button submit-button">Submit</button>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const commentsField = document.getElementById('assessmentComments');
+    const commentsCounter = document.getElementById('commentsCounter');
+    const csvFileInput = document.getElementById('csvFile');
+    const csvFileInfo = document.querySelector('.file-info');
+    const userData = document.getElementById('userData');
+    const backButton = document.getElementById('backButton');
+    const submitButton = document.getElementById('submitButton');
+
+    commentsField.maxLength = 800;
+
+    function updateCharCounter() {
+        if (commentsCounter && commentsField) {
+            commentsCounter.textContent = commentsField.value.length;
+        }
+    }
+
+    commentsField.addEventListener('input', updateCharCounter);
+    updateCharCounter();
+
+    if (sessionStorage.getItem('f3FormData')) {
+        const storedData = JSON.parse(sessionStorage.getItem('f3FormData'));
+        if (storedData.assessmentComments) {
+            commentsField.value = storedData.assessmentComments;
+            updateCharCounter();
+        }
+    }
+
+    csvFileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+
+            if (!file.name.toLowerCase().endsWith('.xlsx')) {
+                alert('Please upload a valid Excel file with .xlsx extension');
+                this.value = '';
+                csvFileInfo.textContent = 'No file selected';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size too large. Please upload a file smaller than 5MB');
+                this.value = '';
+                csvFileInfo.textContent = 'No file selected';
+                return;
+            }
+
+            csvFileInfo.textContent = `Selected file: ${file.name} (${Math.round(file.size / 1024)} KB)`;
+
+            // No need to read .xlsx content here — backend handles it
+            sessionStorage.setItem('csvFileName', file.name);
+        } else {
+            csvFileInfo.textContent = 'No file selected';
+            sessionStorage.removeItem('csvFileName');
+        }
+    });
+
+    function loadUserData() {
+        const f1Data = JSON.parse(sessionStorage.getItem('f1FormData') || '{}');
+        const f2Data = JSON.parse(sessionStorage.getItem('f2FormData') || '{}');
+        let html = '<div>';
+
+        html += '<h3>Course and GA Information</h3><div>';
+        if (Object.keys(f1Data).length > 0) {
+            html += `<div><span>Program:</span> <span>${f1Data.program || ''}</span></div>`;
+            html += `<div><span>Course:</span> <span>${f1Data.course || ''}</span></div>`;
+            html += `<div><span>Academic Term:</span> <span>${f1Data.academicTerm || ''}</span></div>`;
+            html += `<div><span>Program Term:</span> <span>${f1Data.programTerm || ''}</span></div>`;
+            html += `<div><span>Faculty Name 1:</span> <span>${f1Data.facultyFirstName1 || ''}</span></div>`;
+            html += `<div><span>Faculty Name 2:</span> <span>${f1Data.facultyFirstName2 || ''}</span></div>`;
+            html += `<div><span>Graduate Attribute:</span> <span>${f1Data.graduateAttribute || ''}</span></div>`;
+            html += `<div><span>Graduate Attribute Indicator:</span> <span>${f1Data.graduateAttributeIndicator || ''}</span></div>`;
+            html += `<div><span>Instructional Level:</span> <span>${f1Data.instructionalLevel || ''}</span></div>`;
+            html += `<div><span>Assessment Alignment:</span> <span>${f1Data.assessmentAlignment || ''}</span></div>`;
+            html += `<div><span>Course Learning Outcomes:</span> <span>${f1Data.courseLearningOutcomes || ''}</span></div>`;
+            html += `<div><span>Assessment Type:</span> <span>${f1Data.assessmentType || ''}</span></div>`;
+            html += `<div><span>Course Weighting:</span> <span>${f1Data.courseWeighting || ''}%</span></div>`;
+            html += `<div><span>Assessment Max Score:</span> <span>${f1Data.assessmentMaxScore || ''}</span></div>`;
+            html += `<div><span>Assessment Total Score:</span> <span>${f1Data.assessmentTotalScore || ''}</span></div>`;
+            html += `<div><span>GAI Weight:</span> <span>${f1Data.gaiWeight || ''}%</span></div>`;
+            html += `<div><span>GAI Max Points:</span> <span>${f1Data.gaiMaxPoints || ''}</span></div>`;
+        } else {
+            html += '<p>No course and GA information available</p>';
+        }
+        html += '</div>';
+
+        html += '<h3>Assessment Information</h3><div>';
+        if (Object.keys(f2Data).length > 0) {
+            html += `<div><span>Assessment Title:</span> <span>${f2Data.assessmentTitle || ''}</span></div>`;
+            html += `<div><span>Assessment Description:</span> <span>${f2Data.assessmentDescription || ''}</span></div>`;
+            html += `<div><span>Question Text:</span> <span>${f2Data.questionText || ''}</span></div>`;
+        } else {
+            html += '<p>No assessment information available</p>';
+        }
+        html += '</div></div>';
+
+        userData.innerHTML = html;
+    }
+
+    loadUserData();
+
+    backButton.addEventListener('click', function() {
+        const commentData = { assessmentComments: commentsField.value };
+        sessionStorage.setItem('f3FormData', JSON.stringify(commentData));
+        window.location.href = '{% url "form_step2" %}';
+    });
+
+    function checkRequiredFields() {
+        // Remove any existing highlights
+        document.querySelectorAll('.highlight-required').forEach(element => {
+            element.classList.remove('highlight-required');
+        });
+        
+        // Check comment field
+        let allValid = true;
+        if (!commentsField.value.trim()) {
+            commentsField.classList.add('highlight-required');
+            allValid = false;
+        }
+        
+        // Check file input (requires special handling)
+        if (!csvFileInput.files || !csvFileInput.files[0]) {
+            // Highlight the file upload container since we can't highlight the hidden input
+            document.querySelector('.file-upload').classList.add('highlight-required');
+            allValid = false;
+        }
+        
+        return allValid;
+    }
+
+    submitButton.addEventListener('click', function() {
+        // Check all required fields
+        if (!checkRequiredFields()) {
+            // Scroll to the first invalid field
+            const firstInvalid = document.querySelector('.highlight-required');
+            if (firstInvalid) {
+                // If it's the file upload that's invalid
+                if (firstInvalid.classList.contains('file-upload')) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    alert('Please upload an Excel file first');
+                } else {
+                    firstInvalid.focus();
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            return;
+        }
+
+        // Check if we have all required data from previous steps
+        const f1Data = JSON.parse(sessionStorage.getItem('f1FormData') || '{}');
+        const f2Data = JSON.parse(sessionStorage.getItem('f2FormData') || '{}');
+
+        if (Object.keys(f1Data).length === 0) {
+            alert('Missing Course and GA Information. Please go back to step 1.');
+            return;
+        }
+
+        if (Object.keys(f2Data).length === 0) {
+            alert('Missing Assessment Information. Please go back to step 2.');
+            return;
+        }
+
+        const commentData = { assessmentComments: commentsField.value };
+        sessionStorage.setItem('f3FormData', JSON.stringify(commentData));
+
+        const formData = new FormData();
+        formData.append('csv_file', csvFileInput.files[0]);
+
+        const allData = { ...f1Data, ...f2Data, ...commentData };
+        for (const key in allData) {
+            formData.append(key, allData[key]);
+        }
+
+        fetch('{% url "form_submit" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                sessionStorage.clear();
+                window.location.href = '{% url "form_success" %}';
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the data. Please try again.');
+        });
+    });
+});
+</script>
+{% endblock %}

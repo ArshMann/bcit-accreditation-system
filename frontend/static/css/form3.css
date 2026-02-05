@@ -1,0 +1,228 @@
+/* ===========================
+   F3 Container Styles
+=========================== */
+.f3container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1300px;
+    margin: 20px auto;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section Headers */
+.section-header {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.heading {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+    background-color: #173d68;
+    padding: 8px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Upload Section, Data, and Buttons Container */
+.upload-container,
+.data-container,
+.comments-container,
+.button-group {
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+/* File Upload Styling */
+.file-upload {
+    background-color: #173d68;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.file-input {
+    display: none;
+}
+
+.file-label {
+    display: inline-block;
+    background-color: white;
+    color: #173d68;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 8px;
+    transition: background-color 0.3s;
+    font-size: 0.95rem;
+}
+
+.file-label:hover {
+    background-color: #dce6f3;
+}
+
+.file-info {
+    margin-top: 6px;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* User Data Display */
+.user-data > div {
+    background-color: #173d68;
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 0.95rem;
+}
+
+.user-data h3 {
+    margin-bottom: 6px;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.user-data span {
+    display: inline-block;
+    min-width: 140px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+/* Loading text */
+.loading-text {
+    font-style: italic;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+/* Comment field styling */
+.comment-field {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-field label {
+    white-space: nowrap;
+    width: 250px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+
+.comment-field textarea {
+    width: 100%;
+    min-height: 200px;
+    background-color: #c9e4f9;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 16px;
+    resize: vertical;
+}
+
+.comment-field textarea:focus {
+    outline: none;
+    border-color: #0057a6;
+    background-color: #e9f4ff;
+}
+
+.comment-field textarea::placeholder {
+    color: #555;
+}
+
+.comment-field textarea:focus::placeholder {
+    color: transparent;
+}
+
+.char-counter {
+    align-self: flex-end;
+    font-size: 0.8rem;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Buttons */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Make buttons larger */
+.button {
+    flex: 1;
+    padding: 14px 16px; /* Increased padding for bigger height */
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem; /* Slightly larger font */
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button,
+.submit-button {
+    background-color: #2A68F6;
+}
+
+.button:hover {
+    opacity: 0.9;
+}
+
+
+  .highlight-required {
+    box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.8) !important;
+    border: 2px solid #ff0000 !important;
+  }
+  
+  textarea.highlight-required {
+    background-color: rgba(255, 200, 200, 0.3);
+  }
+  
+  .file-upload.highlight-required {
+    background-color: rgba(255, 100, 100, 0.6);
+  }
+  
+  /* Improve the default browser validation message visibility */
+  input:invalid:focus, textarea:invalid:focus {
+    box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.6);
+  }
+
+  /* Download button styles */
+  .download-button-container {
+    margin: 20px auto;
+    text-align: center;
+  }
+
+  .download-button {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    text-decoration: underline;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease, transform 0.5s ease;
+  }
+
+  .download-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  .download-button:active {
+    transform: translateY(0);
+  }

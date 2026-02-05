@@ -1,0 +1,182 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}Assessment Information - BCIT Accreditation System{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/form2.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Form Wrapper -->
+    <div class="form-wrapper">
+        <h2>Additional info about assessment</h2>
+        
+        <form id="assessmentInfoForm">
+            <!-- Hidden input to store form data across pages -->
+            <input type="hidden" id="formData" class="form-storage">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                <!-- Assessment Title Field -->
+                <div class="form-column">
+                    <label for="assessmentTitle">Assessment title</label>
+                    <textarea id="assessmentTitle" name="assessmentTitle" maxlength="12"
+                              placeholder="e.g. Lab 3" required></textarea>
+                    <div><span id="assessmentTitleCounter">0</span>/12</div>
+                </div>
+
+                <!-- Assessment Description Field -->
+                <div class="form-column">
+                    <label for="assessmentDescription">Assessment description</label>
+                    <textarea id="assessmentDescription" name="assessmentDescription" maxlength="200" 
+                              placeholder="Provide a short description of the assessment" required></textarea>
+                    <div><span id="assessmentDescriptionCounter">0</span>/200</div>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <!-- Question Text Field -->
+                <div class="form-column">
+                    <label for="questionText">Question text</label>
+                    <textarea id="questionText" name="questionText" maxlength="400" 
+                              placeholder="Provide the assessment question. Limit description to 400 characters" required></textarea>
+                    <div><span id="questionTextCounter">0</span>/400</div>
+                </div>
+            </div>
+
+            <!-- Button Row -->
+            <div class="button-row">
+                <button type="button" id="backButton">Previous Page</button>
+                <button type="submit" id="nextButton">Next Page</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Reference to form elements
+        const form = document.getElementById('assessmentInfoForm');
+        const assessmentTitle = document.getElementById('assessmentTitle');
+        const assessmentDescription = document.getElementById('assessmentDescription');
+        const questionText = document.getElementById('questionText');
+        
+        // Character counters
+        const titleCounter = document.getElementById('assessmentTitleCounter');
+        const descCounter = document.getElementById('assessmentDescriptionCounter');
+        const questionCounter = document.getElementById('questionTextCounter');
+        
+        // Update maxlength attributes to match database constraints
+        assessmentTitle.maxLength = 12;
+        assessmentDescription.maxLength = 200;
+        questionText.maxLength = 400;
+        
+        // Character count function
+        function updateCharCounter(field, counter) {
+            if (field && counter) {
+                counter.textContent = field.value.length;
+            }
+        }
+        
+        // Initialize counters with current values
+        updateCharCounter(assessmentTitle, titleCounter);
+        updateCharCounter(assessmentDescription, descCounter);
+        updateCharCounter(questionText, questionCounter);
+        
+        // Add input listeners
+        assessmentTitle.addEventListener('input', function() {
+            updateCharCounter(assessmentTitle, titleCounter);
+        });
+        
+        assessmentDescription.addEventListener('input', function() {
+            updateCharCounter(assessmentDescription, descCounter);
+        });
+        
+        questionText.addEventListener('input', function() {
+            updateCharCounter(questionText, questionCounter);
+        });
+        
+        // Load previously stored data if available
+        if (sessionStorage.getItem('f2FormData')) {
+            const storedData = JSON.parse(sessionStorage.getItem('f2FormData'));
+            
+            if (storedData.assessmentTitle) {
+                assessmentTitle.value = storedData.assessmentTitle;
+                updateCharCounter(assessmentTitle, titleCounter);
+            }
+            
+            if (storedData.assessmentDescription) {
+                assessmentDescription.value = storedData.assessmentDescription;
+                updateCharCounter(assessmentDescription, descCounter);
+            }
+            
+            if (storedData.questionText) {
+                questionText.value = storedData.questionText;
+                updateCharCounter(questionText, questionCounter);
+            }
+        }
+        
+        // Add this function to F2's JavaScript (before the form.addEventListener('submit', ...) code)
+        function checkRequiredFields() {
+            // Remove any existing highlights
+            document.querySelectorAll('.highlight-required').forEach(element => {
+                element.classList.remove('highlight-required');
+            });
+            
+            // Find all required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            let allValid = true;
+            
+            // Check each field
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('highlight-required');
+                    allValid = false;
+                }
+            });
+            
+            return allValid;
+        }
+
+        // Handle form submission - store data and navigate to next page
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Check required fields and stop if any are missing
+            if (!checkRequiredFields()) {
+                // Scroll to the first invalid field
+                const firstInvalid = form.querySelector('.highlight-required');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+            
+            // Collect form data
+            const formData = {
+                assessmentTitle: assessmentTitle.value,
+                assessmentDescription: assessmentDescription.value,
+                questionText: questionText.value
+            };
+            
+            // Store in session storage
+            sessionStorage.setItem('f2FormData', JSON.stringify(formData));
+            
+            // Navigate to next page
+            window.location.href = '{% url "form_step3" %}';
+        });
+        
+        // Handle back button - navigate back to F1
+        document.getElementById('backButton').addEventListener('click', function() {
+            window.location.href = '{% url "form_step1" %}';
+        });
+    });
+</script>
+{% endblock %}

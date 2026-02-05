@@ -1,0 +1,389 @@
+{% extends 'bcit_accreditation/base.html' %}
+
+{% block title %}Course and GA Information - BCIT Accreditation System{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/form1.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="form-wrapper">
+    <h1>Welcome to the Course Form Portal</h1>
+
+    <h2>Course and GA info</h2>
+    <p class="form-description">Please provide the following information about your course and the graduate attribute indicator that was assessed in your course.</p>
+
+    <form id="courseGAForm">
+      <input type="hidden" id="formData">
+      {% csrf_token %}
+
+      <div class="form-grid">
+        <!-- Left Column -->
+        <div class="form-column">
+          <label for="program">Program</label>
+          <select id="program" name="program" required>
+            <option value="" disabled selected>Click to select</option>
+            <option value="ELEX">ELEX</option>
+            <option value="CIVL">CIVL</option>
+            <option value="MECH">MECH</option>
+            <option value="MINE">MINE</option>
+          </select>
+
+          <label for="course">Course</label>
+          <input type="text" id="course" name="course" placeholder="e.g. ELEX 3240" required 
+                 pattern="^[A-Za-z]{4}\s?[0-9]{4}$" maxlength="9" 
+                 title="Course code should be 4 letters followed by 4 digits (e.g. ELEX 3240)">
+
+          <label for="academicTerm">Academic term</label>
+          <input type="text" id="academicTerm" name="academicTerm" placeholder="e.g. 202510" required 
+                 pattern="^[0-9]{6}$" maxlength="6"
+                 title="Academic term should be a 6-digit number (e.g. 202510)">
+
+          <label for="programTerm">Program term</label>
+          <select id="programTerm" name="programTerm" required>
+            <option value="" disabled selected>Click to select</option>
+            <option value="1">Term 1</option>
+            <option value="2">Term 2</option>
+            <option value="3">Term 3</option>
+            <option value="4">Term 4</option>
+            <option value="5">Term 5</option>
+            <option value="6">Term 6</option>
+            <option value="7">Term 7</option>
+            <option value="8">Term 8</option>
+          </select>
+
+          <label for="facultyFirstName1">Faculty first name</label>
+          <input type="text" id="facultyFirstName1" name="facultyFirstName1" required 
+                 maxlength="20" pattern="^[A-Za-z\s\-'\.]+$"
+                 title="Faculty name should only contain letters, spaces, hyphens, apostrophes, or periods">
+
+          <label for="facultyFirstName2">Faculty last name</label>
+          <input type="text" id="facultyFirstName2" name="facultyFirstName2" required 
+                 maxlength="20" pattern="^[A-Za-z\s\-'\.]+$"
+                 title="Faculty name should only contain letters, spaces, hyphens, apostrophes, or periods">
+
+          <label for="graduateAttribute">Graduate attribute</label>
+          <select id="graduateAttribute" name="graduateAttribute" required>
+            <option value="" disabled selected>Click to select</option>
+            <option value="GA1">GA1 Knowledge base for engineering</option>
+            <option value="GA2">GA2 Problem Analysis</option>
+            <option value="GA3">GA3 Investigation</option>
+            <option value="GA4">GA4 Design</option>
+            <option value="GA5">GA5 Use of Engineering Tools</option>
+            <option value="GA6">GA6 Individual and Team Work</option>
+            <option value="GA7">GA7 Communication Skills</option>
+            <option value="GA8">GA8 Professionalism</option>
+            <option value="GA9">GA9 Impact of Engineering on Society and the Environment</option>
+            <option value="GA10">GA10 Ethics and Equity</option>
+            <option value="GA11">GA11 Economics and Project Management</option>
+            <option value="GA12">GA12 Life-long Learning</option>
+          </select>
+
+          <label for="graduateAttributeIndicator">Graduate attribute indicator</label>
+          <select id="graduateAttributeIndicator" name="graduateAttributeIndicator" required>
+            <option value="" disabled selected>Click to select</option>
+            <option value=1.1>1.1 Demonstrates competence in mathematics as generally applicable to engineering.</option>
+            <option value=1.2>1.2 Demonstrates competence in natural sciences as generally applicable to engineering.</option>
+            <option value=1.3>1.3 Demonstrates competence in engineering fundamentals.</option>
+            <option value=1.4>1.4 Demonstrates competence in specialized engineering knowledge appropriate to the discipline.</option>
+            <option value=2.1>2.1 Demonstrates an ability to identify, characterize, and define an engineering problem and its constraints.</option>
+            <option value=2.2>2.2 Demonstrates an ability to apply an appropriate model or method to analyze and solve an engineering problem.</option>
+            <option value=2.3>2.3 Evaluates the validity, limitations, and accuracy of solution methods applied and results obtained.</option>
+            <option value=3.1>3.1 Formulates hypotheses based on theoretical frameworks, designs suitable investigative approaches and/or research methodologies through application of principles of engineering design.</option>
+            <option value=3.2>3.2 Conducts planned activities (e.g. literature survey, experiments, measurements) and validates data.</option>
+            <option value=3.3>3.3 Synthesizes data interpretation and information to reach valid conclusions.</option>
+            <option value=3.4>3.4 Analyses and interprets results of an engineering investigation.</option>
+            <option value=4.1>4.1 Defines project objectives and appropriate project scope and criteria with reference to applicable standards, and environmental, social, economic, and health and safety considerations.</option>
+            <option value=4.2>4.2 Researches and/or formulates a design approach (design steps) for engineering problems, which considers multiple design solutions within established design criteria, and utilizes decision-making processes to select the optimal solution.</option>
+            <option value=4.3>4.3 Implement the chosen design solution to obtain a preliminary design.</option>
+            <option value=4.4>4.4 Iteratively refines and optimizes the design in compliance with industry standards and regulations; considering environmental, societal, economic, and health and safety impacts.</option>
+            <option value=5.1>5.1 Selects appropriate engineering tools for specific engineering activities.</option>
+            <option value=5.2>5.2 Identifies the strengths and limitations of tools and evaluates their suitability in solving given engineering problems.</option>
+            <option value=5.3>5.3 Demonstrates proficiency in using discipline specific tools.</option>
+            <option value=5.4>5.4 Adapts and customizes existing engineering tools or creates new tools.</option>
+            <option value=6.1>6.1 Demonstrates active participation in discussions and activities.</option>
+            <option value=6.2>6.2 Engages with team members to plan and advance tasks during execution of team projects; completes appropriate share of group work.</option>
+            <option value=6.3>6.3 Treats team members respectfully and fosters climate of mutual respect and inclusion; gives and receives constructive feedback.</option>
+            <option value=6.4>6.4 Provides direction and inspiration to the team and facilitates achievement of team goals.</option>
+            <option value=6.5>6.5 Ensures all team members are aware of and follow appropriate safety procedures.</option>
+            <option value=7.1>7.1 Produces and/or interprets oral, written, graphical or visual communications.</option>
+            <option value=7.2>7.2 Produces clear technical communication including reports, drawings, specifications, posters, visuals, presentations and/or meeting communications.</option>
+            <option value=7.3>7.3 Demonstrates competency in the oral communication (e.g. presentation skills) of engineering concepts.</option>
+            <option value=7.4>7.4 Demonstrates an ability to give and effectively respond to clear instructions.</option>
+            <option value=8.1>8.1 Explains the role of engineering in society.</option>
+            <option value=8.2>8.2 Demonstrates an understanding of codes, laws, and regulations pertinent to professional engineering in Canada.</option>
+            <option value=8.3>8.3 Demonstrates an understanding of the responsibilities of Professional Engineers with respect to protection of the public and its interest.</option>
+            <option value=9.1>9.1 Demonstrates an understanding of the social, environmental, economic, health, safety, legal, and cultural impacts of engineering activities and technology in general.</option>
+            <option value=9.2>9.2 Conducts social and/or environmental impact analyses of engineering activities.</option>
+            <option value=9.3>9.3 Demonstrates an understanding of and applies environmental stewardship and sustainability principles.</option>
+            <option value=9.4>9.4 Assesses the uncertainties in predicting the interaction of engineering with environmental, social, cultural, legal and economic factors.</option>
+            <option value=10.1>10.1 Recognizes and articulates issues and dilemmas related to ethics and equity.</option>
+            <option value=10.2>10.2 Demonstrates an ability to act ethically and be professionally accountable.</option>
+            <option value=10.3>10.3 Demonstrates knowledge of professional ethical standards.</option>
+            <option value=11.1>11.1 Demonstrates an ability to plan and manage an engineering or construction activity within time and budget constraints.</option>
+            <option value=11.2>11.2 Identifies risks to the schedule and budget, and devises strategies to manage these risks.</option>
+            <option value=11.3>11.3 Applies economic principles to support decision making based on economic analysis.</option>
+            <option value=12.1>12.1 Identifies deficiencies or gaps in knowledge and demonstrates an ability to source information to close this gap.</option>
+            <option value=12.2>12.2 Critically evaluates procured information for authority, currency, and objectivity.</option>
+            <option value=12.3>12.3 Engages in professional development activities to maintain currency in field of practice.</option>
+            <option value=12.4>12.4 Recognizes that licensure requires continued professional development and currency, and participates in professional and academic societies.</option>
+          </select>
+        </div>
+
+        <!-- Right Column -->
+        <div class="form-column">
+          <label for="instructionalLevel">Instructional level</label>
+          <select id="instructionalLevel" name="instructionalLevel" required>
+            <option value="" disabled selected>Click to select</option>
+            <option value="Introductory">Introductory</option>
+            <option value="Intermediate Development">Intermediate Development</option>
+            <option value="Advanced Application">Advanced Application</option>
+          </select>
+
+          <label for="assessmentAlignment">Assessment alignment with GAI</label>
+          <select id="assessmentAlignment" name="assessmentAlignment" required>
+            <option value="" disabled selected>Click to select</option>
+            <option value="Perfectly">Perfectly</option>
+            <option value="Highly">Highly</option>
+            <option value="Mostly">Mostly</option>
+            <option value="Somewhat">Somewhat</option>
+          </select>
+
+          <label for="courseLearningOutcomes">Course learning outcome(s)</label>
+          <input type="text" id="courseLearningOutcomes" name="courseLearningOutcomes" 
+                 maxlength="100" required placeholder="ex CLO2, CLO16">
+
+          <label for="assessmentType">Assessment type</label>
+          <select id="assessmentType" name="assessmentType" required>
+            <option value="" disabled selected>Click to select</option>
+            <option value="Assignment">Assignment</option>
+            <option value="Project">Project</option>
+            <option value="Lab report">Lab report</option>
+            <option value="Presentation">Presentation</option>
+            <option value="Peer-Assessment">Peer-Assessment</option>
+            <option value="Final exam">Final exam</option>
+            <option value="Mid-term">Mid-term</option>
+            <option value="Quiz">Quiz</option>
+            <option value="Homework">Homework</option>
+            <option value="Self-Assessment">Self-Assessment</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <label for="courseWeighting">Course % weighting</label>
+          <input type="number" id="courseWeighting" name="courseWeighting" min="1" max="100" step="0.01" required
+                 title="Course weighting should be between 1 and 100, can include up to 2 decimal places">
+
+          <label for="assessmentMaxScore">Assessment max score points</label>
+          <input type="number" id="assessmentMaxScore" name="assessmentMaxScore" min="0" step="1" required
+                 oninput="this.value = this.value.indexOf('.') >= 0 ? this.value.substr(0, this.value.indexOf('.')) : this.value"
+                 title="Assessment max score should be a whole number">
+
+          <label for="assessmentTotalScore">Assessment total score</label>
+          <input type="number" id="assessmentTotalScore" name="assessmentTotalScore" min="0" step="0.01" required
+                 title="Assessment total score should be between 1 and 100, can include up to 2 decimal places">
+
+          <label for="gaiMaxPoints">GAI max points</label>
+          <input type="number" id="gaiMaxPoints" name="gaiMaxPoints" min="0" step="1" required
+                 oninput="this.value = this.value.indexOf('.') >= 0 ? this.value.substr(0, this.value.indexOf('.')) : this.value"
+                 title="GAI max points should be a whole number">
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button type="button" id="backButton">Back</button>
+        <button type="submit" id="nextButton">Next page</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const formStorage = document.getElementById('formData');
+    const form = document.getElementById('courseGAForm');
+
+    if (sessionStorage.getItem('f1FormData')) {
+      const storedData = JSON.parse(sessionStorage.getItem('f1FormData'));
+      Object.keys(storedData).forEach(key => {
+        const field = document.getElementById(key);
+        if (field) {
+          field.value = storedData[key];
+        }
+      });
+    }
+
+    const gaSelect = document.getElementById('graduateAttribute');
+    const gaiSelect = document.getElementById('graduateAttributeIndicator');
+
+    // Add this after loading stored data to ensure GAI options are filtered
+    if (gaSelect.value) {
+      // Trigger the change event to filter GAI options based on saved GA
+      gaSelect.dispatchEvent(new Event('change'));
+    }
+
+    gaSelect.addEventListener('change', function() {
+      // Reset the indicator dropdown selection
+      gaiSelect.selectedIndex = 0;
+      
+      // Extract the GA number from the selected option
+      const selectedGA = this.value;
+      const gaNumber = selectedGA.match(/GA(\d+)/)?.[1];
+      
+      if (!gaNumber) return;
+      
+      // Show/hide options based on the selected graduate attribute
+      Array.from(gaiSelect.options).forEach(option => {
+        if (option.value === '') return; // Skip the placeholder option
+        
+        // Show only options that start with the selected GA number
+        if (option.value.toString().startsWith(gaNumber + '.')) {
+          option.style.display = '';
+        } else {
+          option.style.display = 'none';
+        }
+      });
+    });
+
+    // Function to check all required fields
+    function checkRequiredFields() {
+      // Remove any existing highlights
+      document.querySelectorAll('.highlight-required').forEach(element => {
+        element.classList.remove('highlight-required');
+      });
+      
+      // Find all required fields
+      const requiredFields = form.querySelectorAll('[required]');
+      let allValid = true;
+      
+      // Check each field
+      requiredFields.forEach(field => {
+        if (!field.value) {
+          field.classList.add('highlight-required');
+          allValid = false;
+        }
+        
+        // Special case for select elements
+        if (field.tagName === 'SELECT' && field.selectedIndex === 0) {
+          field.classList.add('highlight-required');
+          allValid = false;
+        }
+      });
+      
+      return allValid;
+    }
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      // Check required fields and stop if any are missing
+      if (!checkRequiredFields()) {
+        // Scroll to the first invalid field
+        const firstInvalid = form.querySelector('.highlight-required');
+        if (firstInvalid) {
+          firstInvalid.focus();
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+      
+      const formData = {};
+      const formElements = form.elements;
+
+      for (let i = 0; i < formElements.length; i++) {
+        const element = formElements[i];
+        if (element.name && element.name !== 'csrfmiddlewaretoken' && element.type !== 'submit' && element.type !== 'button') {
+          // For integer fields, ensure we store integers
+          if (integerFields.includes(element.id) && element.value.includes('.')) {
+            formData[element.id] = Math.floor(parseFloat(element.value));
+          } else {
+            formData[element.id] = element.value;
+          }
+        }
+      }
+
+      sessionStorage.setItem('f1FormData', JSON.stringify(formData));
+      window.location.href = '{% url "form_step2" %}';
+    });
+
+    document.getElementById('backButton').addEventListener('click', function() {
+      sessionStorage.removeItem('f1FormData');
+      window.location.href = '{% url "home" %}';
+    });
+
+    // Add additional validation for integer fields
+    const integerFields = ['assessmentMaxScore', 'gaiMaxPoints'];
+    
+    integerFields.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      field.addEventListener('blur', function() {
+        if (this.value.includes('.')) {
+          this.value = Math.floor(parseFloat(this.value));
+        }
+      });
+    });
+    
+    // Add validation for course code format
+    const courseField = document.getElementById('course');
+    courseField.addEventListener('blur', function() {
+      if (this.value) {
+        // Format: Convert to uppercase, ensure proper spacing
+        let formattedValue = this.value.toUpperCase().trim();
+        
+        // If it's a valid format but missing space, add it
+        if (/^[A-Z]{4}[0-9]{4}$/.test(formattedValue)) {
+          formattedValue = formattedValue.substr(0, 4) + ' ' + formattedValue.substr(4);
+        }
+        
+        this.value = formattedValue;
+      }
+    });
+    
+    // Add validation for academic term
+    const termField = document.getElementById('academicTerm');
+    termField.addEventListener('input', function() {
+      // Only allow numbers
+      this.value = this.value.replace(/[^\d]/g, '');
+      
+      // Limit to 6 digits
+      if (this.value.length > 6) {
+        this.value = this.value.substring(0, 6);
+      }
+    });
+
+    // Update the courseLearningOutcomes field if it's a dropdown
+    const courseLearningOutcomesField = document.getElementById('courseLearningOutcomes');
+    if (courseLearningOutcomesField.tagName === 'SELECT') {
+      // Store the current value before replacing
+      const currentValue = courseLearningOutcomesField.value;
+      
+      // Get the parent element
+      const parent = courseLearningOutcomesField.parentNode;
+      
+      // Create a new input field
+      const inputField = document.createElement('input');
+      inputField.type = 'text';
+      inputField.id = 'courseLearningOutcomes';
+      inputField.name = 'courseLearningOutcomes';
+      inputField.maxLength = 100;
+      inputField.placeholder = 'Describe course learning outcomes';
+      inputField.required = true;
+      
+      // Replace the select with the input
+      parent.replaceChild(inputField, courseLearningOutcomesField);
+      
+      // Restore any stored data to the new field
+      const storedData = JSON.parse(sessionStorage.getItem('f1FormData') || '{}');
+      if (storedData.courseLearningOutcomes) {
+        inputField.value = storedData.courseLearningOutcomes;
+      } else if (currentValue && currentValue !== '') {
+        // If no stored data but there was a selected value, use that
+        inputField.value = currentValue;
+      }
+    }
+  });
+</script>
+{% endblock %}
