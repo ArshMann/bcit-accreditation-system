@@ -21,7 +21,7 @@ load_dotenv()
 
 FERNET_KEY = os.getenv("FERNET_KEY")
 if not FERNET_KEY:
-    raise ValueError("FERNET_KEY not found in environment (root/.env)")
+    raise ValueError("FERNET_KEY not found in environment")
 FERNET = Fernet(FERNET_KEY)
 
 
@@ -33,13 +33,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ll1@_11#fei0vu*ttb#j9e4y@%oc1y)3%fgbrd@pvrzx5l@puj'
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
 
 # Application definition
 
@@ -55,6 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,21 +87,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bcit_accreditation.wsgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database configuration
+IN_DOCKER = os.getenv("IN_DOCKER", "").lower() == "true"
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'accreditation_db'),
-        'USER': os.getenv('DB_USER', 'basic_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'proj1047'),
-        'HOST': os.getenv('DB_HOST', 'db' if os.environ.get('IN_DOCKER') else 'localhost'), # change to server IP (MUST match service name is docker-compose))
-        'PORT': os.getenv('DB_PORT', '1047'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "accreditation_db"),
+        "USER": os.getenv("DB_USER", "basic_user"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "proj1047"),
+        "HOST": os.getenv("DB_HOST", "db" if IN_DOCKER else "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432" if not IN_DOCKER else "1047"),
     }
 }
+
 
 
 # Password validation
